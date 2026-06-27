@@ -1,0 +1,162 @@
+class User {
+  final String id;
+  final String dni;
+  final String email;
+  final String passwordHash;
+  final String firstName;
+  final String lastName;
+  final DateTime birthdate;
+  final String gender;
+  final String address;
+  final String? phone;
+  final String role;
+  final DateTime? createdAt;
+
+  User({
+    required this.id,
+    required this.dni,
+    required this.email,
+    required this.passwordHash,
+    required this.firstName,
+    required this.lastName,
+    required this.birthdate,
+    required this.gender,
+    required this.address,
+    this.phone,
+    required this.role,
+    this.createdAt,
+  });
+
+  // From the Get User Response
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'] ?? '',
+      dni: json['dni'] ?? '',
+      email: json['email'] ?? '',
+      passwordHash: json['password_hash'] ?? '',
+      firstName: json['firstname'] ?? '',
+      lastName: json['lastname'] ?? '',
+      birthdate: DateTime.parse(json['birthdate'] ?? ''),
+      gender: json['gender'] ?? '',
+      address: json['address'] ?? '',
+      phone: json['phone'] ?? '',
+      role: json['role'] ?? '',
+      createdAt: DateTime.parse(json['created_at'] ?? ''),
+    );
+  }
+
+  Map<String, String> toJson() {
+    return {
+      'id': id,
+      'dni': dni,
+      'email': email,
+      'password_hash': passwordHash,
+      'firstname': firstName,
+      'lastname': lastName,
+      'birthdate': birthdate.toString(),
+      'gender': gender,
+      'adress': address,
+      'phone': phone ?? '',
+      'role': role,
+      'created_at': createdAt.toString(),
+    };
+  }
+}
+
+class SignupRequest {
+  final String dni;
+  final String email;
+  final String password;
+  final String firstname;
+  final String lastname;
+  final String birthdate;
+  final String gender;
+  final String address;
+  final String? phone;
+  final String role;
+
+  SignupRequest({
+    required this.dni,
+    required this.email,
+    required this.password,
+    required this.firstname,
+    required this.lastname,
+    required this.birthdate,
+    required this.gender,
+    required this.address,
+    this.phone,
+    required this.role,
+  });
+
+  Map<String, String> toJson() {
+    return {
+      'dni': dni,
+      'email': email,
+      'password': password,
+      'firstname': firstname,
+      'lastname': lastname,
+      'birthdate': birthdate,
+      'gender': gender,
+      'address': address,
+      'phone': phone ?? '',
+      'role': role,
+    };
+  }
+}
+
+class LogInRequest {
+  final String email;
+  final String password;
+
+  LogInRequest({required this.email, required this.password});
+
+  // To the LogIn Request
+  // only toJson because we send the body to the server
+  Map<String, String> toJson() {
+    return {'email': email, 'password': password};
+  }
+}
+
+class OCRRequest {
+  final String image;
+  final String? mode;
+
+  OCRRequest({required this.image, this.mode});
+
+  Map<String, String> toJson() {
+    return {'image': image, 'mode': mode ?? ''};
+  }
+}
+
+class DocumentTypeRequest {
+  final String type;
+
+  DocumentTypeRequest({required this.type});
+
+  Map<String, String> toJson() {
+    return {'type': type};
+  }
+}
+
+class SavedDocumentRequest {
+  final String userId;
+  final String documentType;
+  final String? imagePath;
+  final String ocrText;
+
+  SavedDocumentRequest({
+    required this.userId,
+    required this.documentType,
+    this.imagePath,
+    required this.ocrText,
+  });
+
+  Map<String, String> toJson() {
+    return {
+      'user_id': userId,
+      'document_type': documentType,
+      'image_path': imagePath ?? '',
+      'ocr_text': ocrText,
+    };
+  }
+}
