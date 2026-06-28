@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../themes/palette.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import '../services/auth_provider.dart';
-import 'configuration_screen.dart';
 import 'my_data_screen.dart';
 import 'upload_documents_screen.dart';
 import 'chat_screen.dart';
@@ -35,17 +34,6 @@ class _HomePatientScreenState extends State<HomePatientScreen> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => const SignInScreen()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings, color: white),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ConfigurationScreen(),
-                ),
               );
             },
           ),
