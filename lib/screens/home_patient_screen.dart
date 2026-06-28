@@ -3,6 +3,8 @@ import '../themes/palette.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import 'configuration_screen.dart';
 import 'my_data_screen.dart';
+import 'upload_documents_screen.dart';
+import 'chat_screen.dart';
 
 class HomePatientScreen extends StatefulWidget {
   const HomePatientScreen({super.key});
@@ -20,7 +22,7 @@ class _HomePatientScreenState extends State<HomePatientScreen> {
       backgroundColor: creamBackground,
       appBar: AppBar(
         backgroundColor: primaryBlue,
-        title: const Text('Aldimi', style: TextStyle(color: white)),
+        title: const Text('ALDIMI ASSIST', style: TextStyle(color: white)),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: white),
@@ -55,10 +57,131 @@ class _HomePatientScreenState extends State<HomePatientScreen> {
   }
 
   Widget _buildBody() {
-    return const Center(
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 20),
+          const Text(
+            'Bienvenid@',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: deepTeal,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'A una nueva experiencia de atención.',
+            style: TextStyle(fontSize: 16, color: deepTeal),
+          ),
+          const SizedBox(height: 30),
+          _buildSection(
+            icon: 'assets/icons/instructions_desk.png',
+            title: 'Sube tus documentos o recetas médicas aquí.',
+            buttonText: 'Probar ->',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const UploadDocumentsScreen(),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          _buildSection(
+            icon: 'assets/icons/instructions_up.png',
+            title: 'Chatea con una IA que conoce todo sobre ti.',
+            buttonText: 'Ir al chat ->',
+            isHighlighted: true,
+            imageRight: true,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ChatScreen()),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          _buildSection(
+            icon: 'assets/icons/instructions_folder.png',
+            title: 'Revisa todos tus datos médicos aquí.',
+            buttonText: 'Ver datos ->',
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const MyDataScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSection({
+    required String icon,
+    required String title,
+    required String buttonText,
+    required VoidCallback onTap,
+    bool isHighlighted = false,
+    bool imageRight = false,
+  }) {
+    final imageWidget = Image.asset(icon, width: 120, height: 120);
+
+    final textWidget = Expanded(
       child: Text(
-        'Bienvenido',
-        style: TextStyle(fontSize: 24, color: deepTeal),
+        title,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: isHighlighted ? white : deepTeal,
+        ),
+      ),
+    );
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: isHighlighted ? primaryBlue.withAlpha(200) : white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: imageRight
+                  ? [textWidget, const SizedBox(width: 16), imageWidget]
+                  : [imageWidget, const SizedBox(width: 16), textWidget],
+            ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: imageRight
+                  ? Alignment.centerLeft
+                  : Alignment.centerRight,
+              child: Text(
+                buttonText,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: isHighlighted ? white : primaryBlue,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
