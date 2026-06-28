@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../themes/palette.dart';
 import '../widgets/bottom_navigation_bar.dart';
+import '../services/auth_provider.dart';
 import 'configuration_screen.dart';
 import 'my_data_screen.dart';
 import 'upload_documents_screen.dart';
 import 'chat_screen.dart';
+import 'signin_screen.dart';
 
 class HomePatientScreen extends StatefulWidget {
   const HomePatientScreen({super.key});
@@ -24,6 +27,17 @@ class _HomePatientScreenState extends State<HomePatientScreen> {
         backgroundColor: primaryBlue,
         title: const Text('ALDIMI ASSIST', style: TextStyle(color: white)),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: white),
+            onPressed: () async {
+              await context.read<AuthProvider>().logout();
+              if (!context.mounted) return;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const SignInScreen()),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.settings, color: white),
             onPressed: () {

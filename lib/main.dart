@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+
 import './themes/palette.dart';
 import './screens/signin_screen.dart';
+import './screens/home_patient_screen.dart';
+import './services/auth_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,13 +18,49 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Aldimi',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: primaryBlue),
+    return ChangeNotifierProvider(
+      create: (_) => AuthProvider(),
+      child: MaterialApp(
+        title: 'Aldimi',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: primaryBlue),
+        ),
+        home: const AuthGate(),
+        debugShowCheckedModeBanner: false,
       ),
-      home: const SignInScreen(),
-      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class AuthGate extends StatefulWidget {
+  const AuthGate({super.key});
+
+  @override
+  State<AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends State<AuthGate> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AuthProvider>().tryAutoLogin();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<AuthProvider>(
+      builder: (context, auth, _) {
+        if (auth.isLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        return auth.isAuthenticated
+            ? const HomePatientScreen()
+            : const SignInScreen();
+      },
     );
   }
 }

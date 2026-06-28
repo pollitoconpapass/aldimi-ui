@@ -61,6 +61,22 @@ class User {
       'created_at': createdAt.toString(),
     };
   }
+
+  Map<String, dynamic> toJsonStorage() {
+    return {
+      'id': id,
+      'dni': dni,
+      'email': email,
+      'firstname': firstName,
+      'lastname': lastName,
+      'birthdate': birthdate.toIso8601String(),
+      'gender': gender,
+      'address': address,
+      'phone': phone ?? '',
+      'role': role,
+      'created_at': createdAt?.toIso8601String(),
+    };
+  }
 }
 
 class SignupRequest {
