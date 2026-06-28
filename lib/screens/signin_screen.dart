@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../themes/palette.dart';
 import '../widgets/input_text_box.dart';
 import '../models/info_models.dart';
-import '../services/api_service.dart';
+import '../services/auth_provider.dart';
 import 'signup_screen.dart';
 import 'home_patient_screen.dart';
 
@@ -37,7 +38,7 @@ class _SignInScreenState extends State<SignInScreen> {
         email: _emailCtrl.text.trim(),
         password: _passwordCtrl.text,
       );
-      await ApiService.login(req);
+      await context.read<AuthProvider>().login(req);
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
