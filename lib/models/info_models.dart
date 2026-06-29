@@ -154,6 +154,71 @@ class DocumentTypeRequest {
   }
 }
 
+class MedicalReport {
+  final String id;
+  final String documentId;
+  final DateTime reportDate;
+  final String condition;
+  final String? results;
+  final List<Map<String, dynamic>>? medications;
+
+  MedicalReport({
+    required this.id,
+    required this.documentId,
+    required this.reportDate,
+    required this.condition,
+    this.results,
+    this.medications,
+  });
+
+  factory MedicalReport.fromJson(Map<String, dynamic> json) {
+    return MedicalReport(
+      id: json['id'] ?? '',
+      documentId: json['document_id'] ?? '',
+      reportDate: DateTime.parse(json['report_date'] ?? ''),
+      condition: json['condition'] ?? '',
+      results: json['results'],
+      medications: json['medications'] != null
+          ? List<Map<String, dynamic>>.from(json['medications'])
+          : null,
+    );
+  }
+}
+
+class Dni {
+  final String id;
+  final String documentId;
+  final String names;
+  final String paternalLastname;
+  final String maternalLastname;
+  final DateTime dateOfBirth;
+  final String gender;
+
+  Dni({
+    required this.id,
+    required this.documentId,
+    required this.names,
+    required this.paternalLastname,
+    required this.maternalLastname,
+    required this.dateOfBirth,
+    required this.gender,
+  });
+
+  factory Dni.fromJson(Map<String, dynamic> json) {
+    return Dni(
+      id: json['id'] ?? '',
+      documentId: json['document_id'] ?? '',
+      names: json['names'] ?? '',
+      paternalLastname: json['paternal_lastname'] ?? '',
+      maternalLastname: json['maternal_lastname'] ?? '',
+      dateOfBirth: DateTime.parse(json['date_of_birth'] ?? ''),
+      gender: json['gender'] ?? '',
+    );
+  }
+
+  String get fullName => '$names $paternalLastname $maternalLastname';
+}
+
 class SavedDocumentRequest {
   final String userId;
   final String documentType;

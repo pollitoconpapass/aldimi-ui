@@ -214,4 +214,59 @@ class ApiService {
     );
     return jsonDecode(res.body);
   }
+
+  // === User Documents ===
+
+  static Future<List<dynamic>> getUserDocuments(String userId) async {
+    final res = await http.get(
+      Uri.parse('$_baseUrl/users/$userId/documents'),
+      headers: _headers(),
+    );
+    return jsonDecode(res.body);
+  }
+
+  static Future<List<dynamic>> getUserDocumentsByType(
+    String userId,
+    String docType,
+  ) async {
+    final res = await http.get(
+      Uri.parse('$_baseUrl/users/$userId/documents/$docType'),
+      headers: _headers(),
+    );
+    return jsonDecode(res.body);
+  }
+
+  // === User Medical Reports ===
+
+  static Future<List<MedicalReport>> getUserMedicalReports(
+    String userId,
+  ) async {
+    final res = await http.get(
+      Uri.parse('$_baseUrl/users/$userId/medical_reports'),
+      headers: _headers(),
+    );
+    final List<dynamic> data = jsonDecode(res.body);
+    return data.map((e) => MedicalReport.fromJson(e)).toList();
+  }
+
+  static Future<MedicalReport> getMedicalReportById(
+    String userId,
+    String reportId,
+  ) async {
+    final res = await http.get(
+      Uri.parse('$_baseUrl/users/$userId/medical_reports/$reportId'),
+      headers: _headers(),
+    );
+    return MedicalReport.fromJson(jsonDecode(res.body));
+  }
+
+  // === User DNI ===
+
+  static Future<Dni> getUserDni(String userId) async {
+    final res = await http.get(
+      Uri.parse('$_baseUrl/users/$userId/dni'),
+      headers: _headers(),
+    );
+    return Dni.fromJson(jsonDecode(res.body));
+  }
 }
