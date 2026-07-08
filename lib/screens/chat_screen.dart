@@ -1,13 +1,17 @@
-import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../models/info_models.dart';
+import '../services/api_service.dart';
+import '../services/auth_provider.dart';
 import '../themes/palette.dart';
 import '../widgets/chat_message.dart';
 import '../widgets/greeting_animation.dart';
-import '../models/info_models.dart';
+import 'chat_history_screen.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final String? sessionId;
+
+  const ChatScreen({super.key, this.sessionId});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -18,6 +22,19 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
   final List<ChatMessage> _messages = [];
 
+  String? _sessionId;
+  bool _isSending = false;
+  bool _isLoadingMessages = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _sessionId = widget.sessionId;
+    if (_sessionId != null) {
+      _loadMessages();
+    }
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -25,40 +42,79 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-  void _sendMessage() {
-    final text = _controller.text.trim();
-    if (text.isEmpty) return;
+  String get _userId => context.read<AuthProvider>().user?.id ?? '';
 
-    setState(() {
-      _messages.add(ChatMessage(text: text, isUser: true));
-      _controller.clear();
-    });
-
-    Future.delayed(const Duration(milliseconds: 500), () {
+  Future<void> _loadMessages() async {
+    if (_sessionId == null) return;
+    setState(() => _isLoadingMessages = true);
+    try {
+      final data = await ApiService.getChatMessages(_sessionId!);
       if (mounted) {
         setState(() {
-          _messages.add(
-            ChatMessage(text: _getBotResponse(text), isUser: false),
-          );
+          _messages.addAll(data.map((e) => ChatMessage.fromJson(e)).toList());
+          _isLoadingMessages = false;
         });
         _scrollToBottom();
       }
-    });
-
-    _scrollToBottom();
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoadingMessages = false);
+      }
+    }
   }
 
-  String _getBotResponse(String userMessage) {
-    final responses = [
-      'Entiendo. Puedes contarme mas sobre tus sintomas?',
-      'Gracias por compartir eso conmigo. Desde cuando lo sientes?',
-      'Voy a anotar esa informacion. Tienes alguna alergia conocida?',
-      'Eso es importante. Has tomado algun medicamento recientemente?',
-      'Comprendo tu preocupacion. Es recomendable consultar con tu medico.',
-      'Buena pregunta! La hidratacion es fundamental para tu salud.',
-    ];
-    final random = Random();
-    return responses[random.nextInt(responses.length)];
+  Future<void> _createSession() async {
+    try {
+      final session = await ApiService.createChatSession(_userId, 'Chat');
+      if (mounted) {
+        setState(() {
+          _sessionId = session['id'];
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error al crear sesion: $e')));
+      }
+    }
+  }
+
+  Future<void> _sendMessage() async {
+    final text = _controller.text.trim();
+    if (text.isEmpty || _isSending) return;
+
+    if (_sessionId == null) {
+      await _createSession();
+      if (_sessionId == null) return;
+    }
+
+    setState(() {
+      _messages.add(ChatMessage(text: text, isUser: true));
+      _isSending = true;
+      _controller.clear();
+    });
+    _scrollToBottom();
+
+    try {
+      final response = await ApiService.sendMessage(_sessionId!, _userId, text);
+      if (mounted) {
+        setState(() {
+          _messages.add(ChatMessage.fromJson(response));
+          _isSending = false;
+        });
+        _scrollToBottom();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isSending = false;
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error al enviar mensaje: $e')));
+      }
+    }
   }
 
   void _scrollToBottom() {
@@ -84,15 +140,66 @@ class _ChatScreenState extends State<ChatScreen> {
           icon: const Icon(Icons.arrow_back, color: white),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history, color: white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ChatHistoryScreen()),
+              ).then((_) {
+                if (mounted) {
+                  setState(() {
+                    _messages.clear();
+                    _sessionId = null;
+                  });
+                }
+              });
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
           Expanded(
-            child: _messages.isEmpty
+            child: _isLoadingMessages
+                ? const Center(
+                    child: CircularProgressIndicator(color: primaryBlue),
+                  )
+                : _messages.isEmpty
                 ? const GreetingAnimation()
                 : _buildMessageList(),
           ),
+          if (_isSending) _buildTypingIndicator(),
           _buildInputBar(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTypingIndicator() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      alignment: Alignment.centerLeft,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: primaryBlue.withValues(alpha: 0.6),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'Escribiendo...',
+            style: TextStyle(
+              fontSize: 13,
+              color: deepTeal.withValues(alpha: 0.5),
+            ),
+          ),
         ],
       ),
     );
@@ -137,6 +244,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: TextField(
                   controller: _controller,
                   textCapitalization: TextCapitalization.sentences,
+                  enabled: !_isSending,
                   decoration: const InputDecoration(
                     hintText: 'Escribe tu mensaje...',
                     hintStyle: TextStyle(color: softGray),
@@ -160,7 +268,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               child: IconButton(
                 icon: const Icon(Icons.send, color: white, size: 20),
-                onPressed: _sendMessage,
+                onPressed: _isSending ? null : _sendMessage,
               ),
             ),
           ],

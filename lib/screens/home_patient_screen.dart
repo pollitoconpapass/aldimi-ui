@@ -5,7 +5,7 @@ import '../widgets/bottom_navigation_bar.dart';
 import '../services/auth_provider.dart';
 import 'my_data_screen.dart';
 import 'upload_documents_screen.dart';
-import 'chat_screen.dart';
+import 'chat_history_screen.dart';
 import 'signin_screen.dart';
 
 class HomePatientScreen extends StatefulWidget {
@@ -102,7 +102,9 @@ class _HomePatientScreenState extends State<HomePatientScreen> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ChatScreen()),
+                MaterialPageRoute(
+                  builder: (context) => const ChatHistoryScreen(),
+                ),
               );
             },
           ),

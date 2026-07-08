@@ -242,6 +242,32 @@ class SavedDocumentRequest {
   }
 }
 
+class ChatSession {
+  final String id;
+  final String userId;
+  final String? title;
+  final String? createdAt;
+  final int messageCount;
+
+  const ChatSession({
+    required this.id,
+    required this.userId,
+    this.title,
+    this.createdAt,
+    this.messageCount = 0,
+  });
+
+  factory ChatSession.fromJson(Map<String, dynamic> json) {
+    return ChatSession(
+      id: json['id'] ?? '',
+      userId: json['user_id'] ?? '',
+      title: json['title'],
+      createdAt: json['created_at'],
+      messageCount: json['message_count'] ?? 0,
+    );
+  }
+}
+
 class ChatMessage {
   final String text;
   final bool isUser;

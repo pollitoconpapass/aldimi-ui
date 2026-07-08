@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../themes/palette.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../models/info_models.dart';
+import '../themes/palette.dart';
 
 class MessageBubble extends StatelessWidget {
   final ChatMessage message;
@@ -37,14 +38,55 @@ class MessageBubble extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Text(
-                message.text,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: isUser ? white : deepTeal,
-                  height: 1.4,
-                ),
-              ),
+              child: isUser
+                  ? Text(
+                      message.text,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: white,
+                        height: 1.4,
+                      ),
+                    )
+                  : MarkdownBody(
+                      data: message.text,
+                      styleSheet: MarkdownStyleSheet(
+                        p: const TextStyle(
+                          fontSize: 15,
+                          color: deepTeal,
+                          height: 1.4,
+                        ),
+                        strong: const TextStyle(
+                          fontSize: 15,
+                          color: deepTeal,
+                          fontWeight: FontWeight.bold,
+                          height: 1.4,
+                        ),
+                        tableHead: const TextStyle(
+                          fontSize: 14,
+                          color: deepTeal,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        tableBody: const TextStyle(
+                          fontSize: 14,
+                          color: deepTeal,
+                        ),
+                        tableBorder: TableBorder.all(color: softGray, width: 1),
+                        tableCellsPadding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
+                        blockquote: TextStyle(
+                          fontSize: 15,
+                          color: deepTeal.withValues(alpha: 0.7),
+                          height: 1.4,
+                        ),
+                        code: TextStyle(
+                          fontSize: 13,
+                          color: primaryBlue,
+                          backgroundColor: creamBackground,
+                        ),
+                      ),
+                    ),
             ),
           ),
         ],
