@@ -241,3 +241,37 @@ class SavedDocumentRequest {
     };
   }
 }
+
+class ChatMessage {
+  final String text;
+  final bool isUser;
+  final String? id;
+  final String? sessionId;
+  final String? userId;
+  final String? createdAt;
+
+  const ChatMessage({
+    required this.text,
+    required this.isUser,
+    this.id,
+    this.sessionId,
+    this.userId,
+    this.createdAt,
+  });
+
+  factory ChatMessage.fromJson(Map<String, dynamic> json) {
+    return ChatMessage(
+      text: json['content'] ?? '',
+      isUser: json['role'] == 'user',
+      id: json['id'],
+      sessionId: json['session_id'],
+      userId: json['user_id'],
+      createdAt: json['created_at'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'content': text,
+    'role': isUser ? 'user' : 'ai',
+  };
+}
