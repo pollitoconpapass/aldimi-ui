@@ -164,14 +164,17 @@ class ApiService {
 
   // === Vision and Document Processing ===
 
-  static Future<List<dynamic>> ocr(String filePath, String mode) async {
+  static Future<String> ocr(String filePath, String mode) async {
     final uri = Uri.parse('$_baseUrl/vision/ocr');
     final request = http.MultipartRequest('POST', uri)
       ..files.add(await http.MultipartFile.fromPath('file', filePath))
       ..fields['mode'] = mode;
     final streamed = await request.send();
     final res = await http.Response.fromStream(streamed);
-    return jsonDecode(res.body);
+    if (res.statusCode != 200) {
+      throw Exception('Error al procesar OCR');
+    }
+    return res.body;
   }
 
   static Future<String> detectDocumentType(String text) async {
@@ -198,20 +201,16 @@ class ApiService {
   static Future<Map<String, dynamic>> saveDocument(
     SavedDocumentRequest request,
   ) async {
-    final body = {
-      'user_id': request.userId,
-      'document_type': request.documentType,
-      'ocr_text': request.ocrText,
-    };
-    final imagePath = request.imagePath;
-    if (imagePath != null && imagePath.isNotEmpty) {
-      body['file_path'] = imagePath;
-    }
     final res = await http.post(
       Uri.parse('$_baseUrl/vision/save'),
       headers: _headers(),
-      body: jsonEncode(body),
+      body: jsonEncode(request.toJson()),
     );
+    if (res.statusCode != 200) {
+      final detail =
+          jsonDecode(res.body)['detail'] ?? 'Error al guardar documento';
+      throw Exception(detail);
+    }
     return jsonDecode(res.body);
   }
 
