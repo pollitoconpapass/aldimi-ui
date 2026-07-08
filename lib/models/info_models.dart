@@ -222,23 +222,30 @@ class Dni {
 class SavedDocumentRequest {
   final String userId;
   final String documentType;
-  final String? imagePath;
+  final String imagePath;
   final String ocrText;
+  final Map<String, dynamic>? dniData;
+  final Map<String, dynamic>? medicalReportData;
 
   SavedDocumentRequest({
     required this.userId,
     required this.documentType,
-    this.imagePath,
+    required this.imagePath,
     required this.ocrText,
+    this.dniData,
+    this.medicalReportData,
   });
 
-  Map<String, String> toJson() {
-    return {
+  Map<String, dynamic> toJson() {
+    final body = <String, dynamic>{
       'user_id': userId,
       'document_type': documentType,
-      'image_path': imagePath ?? '',
+      'file_path': imagePath,
       'ocr_text': ocrText,
     };
+    if (dniData != null) body['dni_data'] = dniData;
+    if (medicalReportData != null) body['medical_report_data'] = medicalReportData;
+    return body;
   }
 }
 
