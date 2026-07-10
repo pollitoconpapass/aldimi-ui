@@ -25,7 +25,7 @@ class ApiService {
       body: jsonEncode(request.toJson()),
     );
     final body = jsonDecode(res.body);
-    if (res.statusCode != 201) {
+    if (res.statusCode != 200) {
       throw Exception(body['detail'] ?? 'Error al registrar usuario');
     }
     return body;
