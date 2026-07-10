@@ -4,6 +4,8 @@ import '../themes/palette.dart';
 import '../widgets/medical_report_card.dart';
 import '../services/api_service.dart';
 import 'medical_report_detail_screen.dart';
+import 'about_patient_chat_screen.dart';
+import 'upload_documents_for_patient_screen.dart';
 
 class PatientDetailScreen extends StatefulWidget {
   final User patient;
@@ -102,6 +104,8 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
             ),
             const SizedBox(height: 12),
             _buildDataBlock(patient, age),
+            const SizedBox(height: 16),
+            _buildActionButtons(context, patient),
             const SizedBox(height: 24),
             const Text(
               'Reportes médicos',
@@ -174,9 +178,17 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
       ),
       child: Column(
         children: [
-          _buildInfoRow(Icons.person, 'Nombre', '${patient.firstName} ${patient.lastName}'),
+          _buildInfoRow(
+            Icons.person,
+            'Nombre',
+            '${patient.firstName} ${patient.lastName}',
+          ),
           const SizedBox(height: 12),
-          _buildInfoRow(Icons.cake, 'Nacimiento', _formatDate(patient.birthdate)),
+          _buildInfoRow(
+            Icons.cake,
+            'Nacimiento',
+            _formatDate(patient.birthdate),
+          ),
           const SizedBox(height: 12),
           _buildInfoRow(Icons.calendar_today, 'Edad', '$age años'),
           const SizedBox(height: 12),
@@ -184,12 +196,18 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
           const SizedBox(height: 12),
           _buildInfoRow(Icons.email, 'Email', patient.email),
           const SizedBox(height: 12),
-          _buildInfoRow(Icons.home, 'Dirección', patient.address.isNotEmpty ? patient.address : '-'),
+          _buildInfoRow(
+            Icons.home,
+            'Dirección',
+            patient.address.isNotEmpty ? patient.address : '-',
+          ),
           const SizedBox(height: 12),
           _buildInfoRow(
             Icons.phone,
             'Teléfono',
-            patient.phone != null && patient.phone!.isNotEmpty ? patient.phone! : '-',
+            patient.phone != null && patient.phone!.isNotEmpty
+                ? patient.phone!
+                : '-',
           ),
         ],
       ),
@@ -219,6 +237,96 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildActionButtons(BuildContext context, User patient) {
+    return Row(
+      children: [
+        Expanded(
+          child: _ActionButton(
+            icon: Icons.chat_bubble_outline,
+            label: 'Pregunta sobre este\nusuario en específico',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PatientChatScreen(
+                    patientId: patient.id,
+                    patientName: '${patient.firstName} ${patient.lastName}',
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _ActionButton(
+            icon: Icons.upload_file,
+            label: 'Agregar más\ndatos',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UploadDocumentsForPatientScreen(
+                    patientId: patient.id,
+                    patientName: '${patient.firstName} ${patient.lastName}',
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _ActionButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        decoration: BoxDecoration(
+          color: white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Icon(icon, size: 28, color: primaryBlue),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: deepTeal,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
