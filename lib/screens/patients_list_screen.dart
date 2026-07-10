@@ -46,7 +46,7 @@ class _PatientsListScreenState extends State<PatientsListScreen> {
     return Scaffold(
       backgroundColor: creamBackground,
       appBar: AppBar(
-        backgroundColor: primaryBlue,
+        backgroundColor: warmCoral,
         title: const Text('Pacientes', style: TextStyle(color: white)),
       ),
       body: _loading
@@ -67,7 +67,7 @@ class _PatientsListScreenState extends State<PatientsListScreen> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
-                  color: primaryBlue.withValues(alpha: 0.08),
+                  color: warmCoral.withValues(alpha: 0.08),
                   child: Column(
                     children: const [
                       Text(
@@ -83,7 +83,7 @@ class _PatientsListScreenState extends State<PatientsListScreen> {
                       Text(
                         'Para saber más de ellos solo dale click a su perfil',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 13, color: primaryBlue),
+                        style: TextStyle(fontSize: 13, color: warmCoral),
                       ),
                     ],
                   ),
@@ -125,7 +125,7 @@ class _PatientsListScreenState extends State<PatientsListScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: primaryBlue,
+        backgroundColor: warmCoral,
         onPressed: () {
           Navigator.push(
             context,

@@ -78,7 +78,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
     return Scaffold(
       backgroundColor: creamBackground,
       appBar: AppBar(
-        backgroundColor: primaryBlue,
+        backgroundColor: warmCoral,
         title: Text(
           '${patient.firstName} ${patient.lastName}',
           style: const TextStyle(color: white),
@@ -120,7 +120,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
               const Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 40),
-                  child: CircularProgressIndicator(color: primaryBlue),
+                  child: CircularProgressIndicator(color: warmCoral),
                 ),
               )
             else if (_error != null)
@@ -217,7 +217,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: primaryBlue),
+        Icon(icon, size: 20, color: warmCoral),
         const SizedBox(width: 10),
         SizedBox(
           width: 90,
@@ -313,7 +313,7 @@ class _ActionButton extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(icon, size: 28, color: primaryBlue),
+            Icon(icon, size: 28, color: warmCoral),
             const SizedBox(height: 8),
             Text(
               label,

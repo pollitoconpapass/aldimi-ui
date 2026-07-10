@@ -141,7 +141,7 @@ class _PatientChatScreenState extends State<PatientChatScreen> {
     return Scaffold(
       backgroundColor: creamBackground,
       appBar: AppBar(
-        backgroundColor: primaryBlue,
+        backgroundColor: warmCoral,
         title: Text(
           'Chat sobre ${widget.patientName}',
           style: const TextStyle(color: white, fontSize: 16),
@@ -156,7 +156,7 @@ class _PatientChatScreenState extends State<PatientChatScreen> {
           Expanded(
             child: _isLoadingMessages
                 ? const Center(
-                    child: CircularProgressIndicator(color: primaryBlue),
+                    child: CircularProgressIndicator(color: warmCoral),
                   )
                 : _messages.isEmpty
                 ? const GreetingAnimation()
@@ -181,7 +181,7 @@ class _PatientChatScreenState extends State<PatientChatScreen> {
             height: 16,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              color: primaryBlue.withValues(alpha: 0.6),
+              color: warmCoral.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(width: 8),
@@ -255,7 +255,7 @@ class _PatientChatScreenState extends State<PatientChatScreen> {
               width: 44,
               height: 44,
               decoration: const BoxDecoration(
-                color: primaryBlue,
+                color: warmCoral,
                 shape: BoxShape.circle,
               ),
               child: IconButton(

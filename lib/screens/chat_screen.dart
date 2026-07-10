@@ -43,6 +43,11 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   String get _userId => context.read<AuthProvider>().user?.id ?? '';
+  
+  Color get _accentColor {
+    final isDoctor = context.read<AuthProvider>().user?.role == 'doctor';
+    return isDoctor ? warmCoral : primaryBlue;
+  }
 
   Future<void> _loadMessages() async {
     if (_sessionId == null) return;
@@ -137,7 +142,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       backgroundColor: creamBackground,
       appBar: AppBar(
-        backgroundColor: primaryBlue,
+        backgroundColor: _accentColor,
         title: const Text('Chat', style: TextStyle(color: white)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: white),
@@ -166,8 +171,8 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: _isLoadingMessages
-                ? const Center(
-                    child: CircularProgressIndicator(color: primaryBlue),
+                ? Center(
+                    child: CircularProgressIndicator(color: _accentColor),
                   )
                 : _messages.isEmpty
                 ? const GreetingAnimation()
@@ -192,7 +197,7 @@ class _ChatScreenState extends State<ChatScreen> {
             height: 16,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              color: primaryBlue.withValues(alpha: 0.6),
+              color: _accentColor.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(width: 8),
@@ -265,8 +270,8 @@ class _ChatScreenState extends State<ChatScreen> {
             Container(
               width: 44,
               height: 44,
-              decoration: const BoxDecoration(
-                color: primaryBlue,
+              decoration: BoxDecoration(
+                color: _accentColor,
                 shape: BoxShape.circle,
               ),
               child: IconButton(

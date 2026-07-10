@@ -18,7 +18,7 @@ class _HomeDoctorScreenState extends State<HomeDoctorScreen> {
     return Scaffold(
       backgroundColor: creamBackground,
       appBar: AppBar(
-        backgroundColor: primaryBlue,
+        backgroundColor: warmCoral,
         title: const Text('Aldimi', style: TextStyle(color: white)),
       ),
       body: const Center(
