@@ -72,10 +72,13 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDoctor = context.read<AuthProvider>().user?.role == 'doctor';
+    final accentColor = isDoctor ? warmCoral : primaryBlue;
+
     return Scaffold(
       backgroundColor: creamBackground,
       appBar: AppBar(
-        backgroundColor: primaryBlue,
+        backgroundColor: accentColor,
         title: const Text('Chats', style: TextStyle(color: white)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: white),
@@ -83,15 +86,15 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: primaryBlue,
+        backgroundColor: accentColor,
         onPressed: () => _openSession(),
         child: const Icon(Icons.add, color: white),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: primaryBlue))
+          ? Center(child: CircularProgressIndicator(color: accentColor))
           : _sessions.isEmpty
               ? _buildEmptyState()
-              : _buildSessionList(),
+              : _buildSessionList(accentColor),
     );
   }
 
@@ -123,10 +126,10 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
     );
   }
 
-  Widget _buildSessionList() {
+  Widget _buildSessionList(Color accentColor) {
     return RefreshIndicator(
       onRefresh: _loadSessions,
-      color: primaryBlue,
+      color: accentColor,
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         itemCount: _sessions.length,
@@ -134,6 +137,7 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
           final session = _sessions[index];
           return _SessionTile(
             session: session,
+            accentColor: accentColor,
             onTap: () => _openSession(sessionId: session.id),
             onDelete: () => _confirmDelete(session),
           );
@@ -173,11 +177,13 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
 
 class _SessionTile extends StatelessWidget {
   final ChatSession session;
+  final Color accentColor;
   final VoidCallback onTap;
   final VoidCallback onDelete;
 
   const _SessionTile({
     required this.session,
+    required this.accentColor,
     required this.onTap,
     required this.onDelete,
   });
@@ -219,8 +225,8 @@ class _SessionTile extends StatelessWidget {
                 Container(
                   width: 40,
                   height: 40,
-                  decoration: const BoxDecoration(
-                    color: primaryBlue,
+                  decoration: BoxDecoration(
+                    color: accentColor,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.chat, color: white, size: 20),

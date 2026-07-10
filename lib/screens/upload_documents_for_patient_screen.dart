@@ -148,7 +148,7 @@ class _UploadDocumentsForPatientScreenState
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: primaryBlue,
+      backgroundColor: warmCoral,
       title: Text(
         'Subir documento a ${widget.patientName}',
         style: const TextStyle(color: white, fontSize: 16),
@@ -171,7 +171,7 @@ class _UploadDocumentsForPatientScreenState
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(color: primaryBlue),
+            CircularProgressIndicator(color: warmCoral),
             SizedBox(height: 16),
             Text(
               'Procesando...',
@@ -200,7 +200,7 @@ class _UploadDocumentsForPatientScreenState
               ElevatedButton(
                 onPressed: _reset,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryBlue,
+                  backgroundColor: warmCoral,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,
                     vertical: 14,
@@ -255,13 +255,13 @@ class _UploadDocumentsForPatientScreenState
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: primaryBlue.withAlpha(20),
+              color: warmCoral.withAlpha(20),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.check_circle_outline,
               size: 56,
-              color: primaryBlue,
+              color: warmCoral,
             ),
           ),
           const SizedBox(height: 24),
@@ -285,7 +285,7 @@ class _UploadDocumentsForPatientScreenState
             child: ElevatedButton(
               onPressed: _reset,
               style: ElevatedButton.styleFrom(
-                backgroundColor: primaryBlue,
+                backgroundColor: warmCoral,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -302,7 +302,7 @@ class _UploadDocumentsForPatientScreenState
             onPressed: () => Navigator.pop(context),
             child: const Text(
               'Volver al perfil del paciente',
-              style: TextStyle(color: primaryBlue, fontSize: 16),
+              style: TextStyle(color: warmCoral, fontSize: 16),
             ),
           ),
         ],

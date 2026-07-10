@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/info_models.dart';
+import '../services/auth_provider.dart';
 import '../themes/palette.dart';
 
 class MedicalReportDetailScreen extends StatelessWidget {
@@ -9,13 +11,15 @@ class MedicalReportDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDoctor = context.read<AuthProvider>().user?.role == 'doctor';
+    final accentColor = isDoctor ? warmCoral : primaryBlue;
     final dateStr =
         '${report.reportDate.day}/${report.reportDate.month}/${report.reportDate.year}';
 
     return Scaffold(
       backgroundColor: creamBackground,
       appBar: AppBar(
-        backgroundColor: primaryBlue,
+        backgroundColor: accentColor,
         title: Text(report.condition, style: const TextStyle(color: white)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: white),

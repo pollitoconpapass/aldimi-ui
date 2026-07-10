@@ -222,7 +222,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: primaryBlue,
+      backgroundColor: warmCoral,
       title: const Text('Agregar paciente', style: TextStyle(color: white)),
       leading: _currentStep > 0 && _currentStep < 2
           ? IconButton(
@@ -242,7 +242,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(color: primaryBlue),
+            CircularProgressIndicator(color: warmCoral),
             SizedBox(height: 16),
             Text(
               'Procesando...',
@@ -271,7 +271,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
               ElevatedButton(
                 onPressed: _reset,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryBlue,
+                  backgroundColor: warmCoral,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,
                     vertical: 14,
@@ -392,7 +392,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
         ),
         child: Column(
           children: [
-            Icon(icon, size: 36, color: primaryBlue),
+            Icon(icon, size: 36, color: warmCoral),
             const SizedBox(height: 12),
             Text(
               label,
@@ -464,7 +464,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             child: ElevatedButton(
               onPressed: () => _createUser(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: primaryBlue,
+                backgroundColor: warmCoral,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -570,7 +570,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             child: ElevatedButton(
               onPressed: () => _createUser(dniData: _structuredData),
               style: ElevatedButton.styleFrom(
-                backgroundColor: primaryBlue,
+                backgroundColor: warmCoral,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -598,7 +598,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontSize: 12, color: primaryBlue)),
+          Text(label, style: const TextStyle(fontSize: 12, color: warmCoral)),
           const SizedBox(height: 4),
           Text(
             value.isNotEmpty ? value : '-',
@@ -626,11 +626,11 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
       obscureText: obscure,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: primaryBlue),
+        prefixIcon: Icon(icon, color: warmCoral),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: primaryBlue),
+          borderSide: const BorderSide(color: warmCoral),
         ),
       ),
     );
@@ -652,7 +652,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: 'Fecha de nacimiento',
-          prefixIcon: const Icon(Icons.cake, color: primaryBlue),
+          prefixIcon: const Icon(Icons.cake, color: warmCoral),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
         child: Text(
@@ -670,7 +670,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
       initialValue: _gender,
       decoration: InputDecoration(
         labelText: 'Género',
-        prefixIcon: const Icon(Icons.wc, color: primaryBlue),
+          prefixIcon: const Icon(Icons.wc, color: warmCoral),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
       items: const [
@@ -694,13 +694,13 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: primaryBlue.withAlpha(20),
+              color: warmCoral.withAlpha(20),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.check_circle_outline,
               size: 56,
-              color: primaryBlue,
+              color: warmCoral,
             ),
           ),
           const SizedBox(height: 24),
@@ -723,7 +723,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             child: ElevatedButton(
               onPressed: _reset,
               style: ElevatedButton.styleFrom(
-                backgroundColor: primaryBlue,
+                backgroundColor: warmCoral,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -740,7 +740,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             onPressed: () => Navigator.pop(context),
             child: const Text(
               'Volver a la lista',
-              style: TextStyle(color: primaryBlue, fontSize: 16),
+              style: TextStyle(color: warmCoral, fontSize: 16),
             ),
           ),
         ],
