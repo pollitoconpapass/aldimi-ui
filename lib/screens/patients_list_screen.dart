@@ -3,7 +3,9 @@ import '../themes/palette.dart';
 import '../models/info_models.dart';
 import '../services/api_service.dart';
 import '../widgets/bottom_navigation_bar.dart';
+import '../widgets/patient_card.dart';
 import 'home_doctor_screen.dart';
+import 'patient_detail_screen.dart';
 
 class PatientsListScreen extends StatefulWidget {
   const PatientsListScreen({super.key});
@@ -62,52 +64,58 @@ class _PatientsListScreenState extends State<PatientsListScreen> {
                         style: TextStyle(fontSize: 16, color: deepTeal),
                       ),
                     )
-                  : ListView.separated(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _patients.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 8),
-                      itemBuilder: (context, index) {
-                        final patient = _patients[index];
-                        return Card(
-                          color: white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 2,
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            leading: CircleAvatar(
-                              backgroundColor: primaryBlue,
-                              child: Text(
-                                '${patient.firstName.isNotEmpty ? patient.firstName[0] : ''}'
-                                '${patient.lastName.isNotEmpty ? patient.lastName[0] : ''}',
-                                style: const TextStyle(
-                                  color: white,
-                                  fontWeight: FontWeight.bold,
+                  : Column(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          color: primaryBlue.withValues(alpha: 0.08),
+                          child: Column(
+                            children: const [
+                              Text(
+                                'Aquí podrás ver los resultados de todos los pacientes',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: deepTeal,
                                 ),
                               ),
-                            ),
-                            title: Text(
-                              '${patient.firstName} ${patient.lastName}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: deepTeal,
+                              SizedBox(height: 4),
+                              Text(
+                                'Para saber más de ellos solo dale click a su perfil',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: softGray,
+                                ),
                               ),
-                            ),
-                            subtitle: Text(
-                              patient.email,
-                              style: const TextStyle(color: deepTeal),
-                            ),
-                            trailing: const Icon(
-                              Icons.chevron_right,
-                              color: primaryBlue,
-                            ),
+                            ],
                           ),
-                        );
-                      },
+                        ),
+                        Expanded(
+                          child: ListView.separated(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: _patients.length,
+                            separatorBuilder: (_, __) => const SizedBox(height: 8),
+                            itemBuilder: (context, index) {
+                              return PatientCard(
+                                patient: _patients[index],
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PatientDetailScreen(
+                                        patient: _patients[index],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
       bottomNavigationBar: AldimiBottomNavBar(
         currentIndex: 2,
