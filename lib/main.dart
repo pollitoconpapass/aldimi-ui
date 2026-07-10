@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import './themes/palette.dart';
 import './screens/signin_screen.dart';
 import './screens/home_patient_screen.dart';
+import './screens/home_doctor_screen.dart';
 import './services/auth_provider.dart';
 
 Future<void> main() async {
@@ -57,9 +58,9 @@ class _AuthGateState extends State<AuthGate> {
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        return auth.isAuthenticated
-            ? const HomePatientScreen()
-            : const SignInScreen();
+        if (!auth.isAuthenticated) return const SignInScreen();
+        final isDoctor = auth.user?.role == 'doctor';
+        return isDoctor ? const HomeDoctorScreen() : const HomePatientScreen();
       },
     );
   }
