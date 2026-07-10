@@ -97,7 +97,10 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollToBottom();
 
     try {
-      final response = await ApiService.sendMessage(_sessionId!, _userId, text);
+      final isDoctor = context.read<AuthProvider>().user?.role == 'doctor';
+      final response = await isDoctor
+          ? await ApiService.sendDoctorMessage(_sessionId!, _userId, text)
+          : await ApiService.sendMessage(_sessionId!, _userId, text);
       if (mounted) {
         setState(() {
           _messages.add(ChatMessage.fromJson(response));
