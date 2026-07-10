@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/info_models.dart';
 import '../themes/palette.dart';
 import '../widgets/medical_report_card.dart';
+import '../widgets/pull_to_refresh.dart';
 import '../services/api_service.dart';
 import 'medical_report_detail_screen.dart';
 import 'about_patient_chat_screen.dart';
@@ -88,74 +89,77 @@ class _PatientDetailScreenState extends State<PatientDetailScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            const Text(
-              'Datos generales',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: deepTeal,
-              ),
-            ),
-            const SizedBox(height: 12),
-            _buildDataBlock(patient, age),
-            const SizedBox(height: 16),
-            _buildActionButtons(context, patient),
-            const SizedBox(height: 24),
-            const Text(
-              'Reportes médicos',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: deepTeal,
-              ),
-            ),
-            const SizedBox(height: 12),
-            if (_isLoading)
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 40),
-                  child: CircularProgressIndicator(color: warmCoral),
+      body: PullToRefresh(
+        onRefresh: _loadReports,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 10),
+              const Text(
+                'Datos generales',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: deepTeal,
                 ),
-              )
-            else if (_error != null)
-              Center(
-                child: Text(
-                  'Error: $_error',
-                  style: const TextStyle(color: warmCoral),
+              ),
+              const SizedBox(height: 12),
+              _buildDataBlock(patient, age),
+              const SizedBox(height: 16),
+              _buildActionButtons(context, patient),
+              const SizedBox(height: 24),
+              const Text(
+                'Reportes médicos',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: deepTeal,
                 ),
-              )
-            else if (_medicalReports.isEmpty)
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 40),
+              ),
+              const SizedBox(height: 12),
+              if (_isLoading)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 40),
+                    child: CircularProgressIndicator(color: warmCoral),
+                  ),
+                )
+              else if (_error != null)
+                Center(
                   child: Text(
-                    'Este paciente aún no tiene reportes médicos.',
-                    style: TextStyle(fontSize: 16, color: deepTeal),
+                    'Error: $_error',
+                    style: const TextStyle(color: warmCoral),
+                  ),
+                )
+              else if (_medicalReports.isEmpty)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 40),
+                    child: Text(
+                      'Este paciente aún no tiene reportes médicos.',
+                      style: TextStyle(fontSize: 16, color: deepTeal),
+                    ),
+                  ),
+                )
+              else
+                ..._medicalReports.map(
+                  (report) => MedicalReportCard(
+                    report: report,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              MedicalReportDetailScreen(report: report),
+                        ),
+                      );
+                    },
                   ),
                 ),
-              )
-            else
-              ..._medicalReports.map(
-                (report) => MedicalReportCard(
-                  report: report,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            MedicalReportDetailScreen(report: report),
-                      ),
-                    );
-                  },
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
