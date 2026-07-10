@@ -5,15 +5,19 @@ import '../screens/chat_screen.dart';
 class AldimiBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
+  final String role;
 
   const AldimiBottomNavBar({
     super.key,
     required this.currentIndex,
     required this.onTap,
+    this.role = 'patient',
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDoctor = role == 'doctor';
+
     return Container(
       decoration: const BoxDecoration(
         color: white,
@@ -46,8 +50,8 @@ class AldimiBottomNavBar extends StatelessWidget {
                 },
               ),
               _NavItem(
-                icon: Icons.bar_chart,
-                label: 'Datos',
+                icon: isDoctor ? Icons.people : Icons.bar_chart,
+                label: isDoctor ? 'Pacientes' : 'Datos',
                 isSelected: currentIndex == 2,
                 onTap: () => onTap(2),
               ),
