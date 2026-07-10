@@ -108,6 +108,23 @@ class ApiService {
     return jsonDecode(res.body);
   }
 
+  static Future<Map<String, dynamic>> sendDoctorMessage(
+    String sessionId,
+    String userId,
+    String content,
+  ) async {
+    final res = await http.post(
+      Uri.parse('$_baseUrl/chat/doctor/messages'),
+      headers: _headers(),
+      body: jsonEncode({
+        'session_id': sessionId,
+        'user_id': userId,
+        'content': content,
+      }),
+    );
+    return jsonDecode(res.body);
+  }
+
   // === Users ===
 
   static Future<List<dynamic>> getAllUsers() async {
