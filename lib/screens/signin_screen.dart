@@ -6,6 +6,7 @@ import '../models/info_models.dart';
 import '../services/auth_provider.dart';
 import 'signup_screen.dart';
 import 'home_patient_screen.dart';
+import 'home_doctor_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -40,9 +41,13 @@ class _SignInScreenState extends State<SignInScreen> {
       );
       await context.read<AuthProvider>().login(req);
       if (!mounted) return;
+      final isDoctor = context.read<AuthProvider>().user?.role == 'doctor';
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomePatientScreen()),
+        MaterialPageRoute(
+          builder: (_) =>
+              isDoctor ? const HomeDoctorScreen() : const HomePatientScreen(),
+        ),
       );
     } catch (e) {
       setState(() => _error = e.toString());

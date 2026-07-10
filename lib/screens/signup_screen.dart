@@ -285,7 +285,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           items: const [
             DropdownMenuItem(value: 'patient', child: Text('Paciente')),
-            DropdownMenuItem(value: 'specialist', child: Text('Especialista')),
+            DropdownMenuItem(value: 'doctor', child: Text('Doctor')),
           ],
           onChanged: (v) => setState(() => _role = v ?? 'patient'),
         ),
