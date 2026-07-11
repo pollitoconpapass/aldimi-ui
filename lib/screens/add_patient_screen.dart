@@ -96,6 +96,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
 
     try {
       final data = await ApiService.formatText(correctedText, 'dni');
+      _populateControllersFromData(data);
       setState(() {
         _ocrText = correctedText;
         _structuredData = data;
@@ -106,46 +107,40 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
     }
   }
 
+  void _populateControllersFromData(Map<String, dynamic> data) {
+    _dniController.text = data['id'] ?? '';
+    _firstNameController.text = data['names'] ?? '';
+    final paternal = data['paternal_lastname'] ?? '';
+    final maternal = data['maternal_lastname'] ?? '';
+    _lastNameController.text = '$paternal $maternal'.trim();
+    final rawGender = (data['gender'] ?? 'male').toString().toLowerCase();
+    _gender = rawGender == 'female' ? 'female' : 'male';
+    if (data['date_of_birth'] != null &&
+        (data['date_of_birth'] as String).isNotEmpty) {
+      try {
+        _birthdate = DateTime.parse(data['date_of_birth']);
+      } catch (_) {}
+    }
+  }
+
   // === User Creation ===
 
-  Future<void> _createUser({Map<String, dynamic>? dniData}) async {
+  Future<void> _createUser() async {
     setState(() {
       _isLoading = true;
       _error = null;
     });
 
     try {
-      String dni;
-      String firstName;
-      String lastName;
-      String birthdateStr;
-      String gender;
-      String address;
-      String phone;
-
-      if (dniData != null) {
-        dni = dniData['id'] ?? '';
-        firstName = dniData['names'] ?? '';
-        final paternal = dniData['paternal_lastname'] ?? '';
-        final maternal = dniData['maternal_lastname'] ?? '';
-        lastName = '$paternal $maternal'.trim();
-        birthdateStr = dniData['date_of_birth'] ?? '';
-        gender = dniData['gender'] ?? 'male';
-        address = _addressController.text.isNotEmpty
-            ? _addressController.text
-            : '';
-        phone = _phoneController.text.isNotEmpty
-            ? _phoneController.text
-            : '';
-      } else {
-        dni = _dniController.text.trim();
-        firstName = _firstNameController.text.trim();
-        lastName = _lastNameController.text.trim();
-        birthdateStr = _birthdate != null ? _birthdate!.toIso8601String() : '';
-        gender = _gender;
-        address = _addressController.text.trim();
-        phone = _phoneController.text.trim();
-      }
+      final dni = _dniController.text.trim();
+      final firstName = _firstNameController.text.trim();
+      final lastName = _lastNameController.text.trim();
+      final birthdateStr = _birthdate != null
+          ? _birthdate!.toIso8601String()
+          : '';
+      final gender = _gender;
+      final address = _addressController.text.trim();
+      final phone = _phoneController.text.trim();
 
       if (dni.isEmpty ||
           firstName.isEmpty ||
@@ -170,17 +165,18 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
         role: 'patient',
       );
 
-      await ApiService.signup(request);
+      final signupResponse = await ApiService.signup(request);
+      final userId = signupResponse['id'] as String?;
 
       // Save DNI document if scanned
-      if (dniData != null && _selectedImage != null) {
+      if (_structuredData != null && _selectedImage != null && userId != null) {
         try {
           final docRequest = SavedDocumentRequest(
-            userId: dni,
+            userId: userId,
             documentType: 'dni',
             imagePath: _selectedImage!.path,
             ocrText: _ocrText ?? '',
-            dniData: dniData,
+            dniData: _structuredData,
           );
           await ApiService.saveDocument(docRequest);
         } catch (e) {
@@ -526,31 +522,31 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           ),
           const SizedBox(height: 8),
           const Text(
-            'Verifica que los datos sean correctos.',
+            'Verifica y corrige los datos si es necesario.',
             style: TextStyle(fontSize: 14, color: deepTeal),
           ),
           const SizedBox(height: 24),
-          _buildReviewField('Nombre', _structuredData!['names'] ?? ''),
-          const SizedBox(height: 12),
-          _buildReviewField(
-            'Apellido paterno',
-            _structuredData!['paternal_lastname'] ?? '',
+          _buildTextField(
+            controller: _dniController,
+            label: 'DNI',
+            icon: Icons.badge,
           ),
-          const SizedBox(height: 12),
-          _buildReviewField(
-            'Apellido materno',
-            _structuredData!['maternal_lastname'] ?? '',
+          const SizedBox(height: 16),
+          _buildTextField(
+            controller: _firstNameController,
+            label: 'Nombre(s)',
+            icon: Icons.person,
           ),
-          const SizedBox(height: 12),
-          _buildReviewField(
-            'Fecha de nacimiento',
-            _structuredData!['date_of_birth'] ?? '',
+          const SizedBox(height: 16),
+          _buildTextField(
+            controller: _lastNameController,
+            label: 'Apellido(s)',
+            icon: Icons.person,
           ),
-          const SizedBox(height: 12),
-          _buildReviewField(
-            'Género',
-            _structuredData!['gender'] == 'male' ? 'Masculino' : 'Femenino',
-          ),
+          const SizedBox(height: 16),
+          _buildDateField(),
+          const SizedBox(height: 16),
+          _buildGenderField(),
           const SizedBox(height: 16),
           _buildTextField(
             controller: _addressController,
@@ -568,7 +564,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () => _createUser(dniData: _structuredData),
+              onPressed: () => _createUser(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: warmCoral,
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -580,32 +576,6 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                 'Crear paciente',
                 style: TextStyle(color: white, fontSize: 16),
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildReviewField(String label, String value) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: white,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: const TextStyle(fontSize: 12, color: warmCoral)),
-          const SizedBox(height: 4),
-          Text(
-            value.isNotEmpty ? value : '-',
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: deepTeal,
             ),
           ),
         ],
@@ -670,7 +640,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
       initialValue: _gender,
       decoration: InputDecoration(
         labelText: 'Género',
-          prefixIcon: const Icon(Icons.wc, color: warmCoral),
+        prefixIcon: const Icon(Icons.wc, color: warmCoral),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
       items: const [
